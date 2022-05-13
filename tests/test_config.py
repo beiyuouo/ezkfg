@@ -11,12 +11,13 @@ class TestConfig:
         config.a = 3
         assert config.a == 3
 
-        config.a.b.c = 4
-        assert config.d.b.c == 4
+        config["d.e.f"] = 3
+        assert config["d.e.f"] == 3
+        assert config.d.e.f == 3
 
     def test_laod(self):
         config = Config()
-        config.load(os.path.join(os.path.dirname(__file__), "..", "examples", "example.json"))
+        config.load(os.path.join(os.path.dirname(__file__), "..", "examples", "example_config.json"))
 
     def test_dump(self):
         config = Config()

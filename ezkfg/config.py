@@ -7,21 +7,25 @@
 # @License :   Apache License 2.0
 
 
+from operator import setitem
 import os
 import copy
+from typing import Dict, List, Tuple, Any, Union, Optional, Iterable
 
 from .handler import build_handler, get_handler
 
 
 class Config(object):
+    __delimiter__ = "."
+
     def __init__(self, *args, **kwargs):
         for arg in args:
             if not arg:
                 continue
-            elif isinstance(arg, dict):
+            elif isinstance(arg, Dict):
                 for key, val in arg.items():
                     setattr(self, key, self._hook(val))
-            elif isinstance(arg, tuple) and (not isinstance(arg[0], tuple)):
+            elif isinstance(arg, Tuple) and (not isinstance(arg[0], tuple)):
                 setattr(self, arg[0], self._hook(arg[1]))
             else:
                 for key, val in iter(arg):
@@ -31,16 +35,16 @@ class Config(object):
             setattr(self, key, self._hook(val))
 
     def _hook(self, value):
-        if isinstance(value, dict):
+        if isinstance(value, Dict):
             return Config(value)
-        elif isinstance(value, list):
+        elif isinstance(value, List):
             return type(value)(self._hook(elem) for elem in value)
         return value
 
     def load(self, obj):
-        if isinstance(obj, dict):
+        if isinstance(obj, Dict):
             self.update(obj)
-        elif isinstance(obj, list):
+        elif isinstance(obj, List):
             pass
         elif isinstance(obj, Config):
             self.update(obj)
@@ -59,7 +63,7 @@ class Config(object):
     def dump(self, path: str):
         pass
 
-    def merge(self, other: dict):
+    def merge(self, other):
         pass
 
     def update(self, other):
@@ -78,26 +82,76 @@ class Config(object):
             setattr(other, key, copy.deepcopy(value))
         return other
 
+    def __getitem__(self, key: str) -> Any:
+        return getattr(self, key)
+
+    def __setitem__(self, key: str, value: Any) -> None:
+        setattr(self, key, self._hook(value))
+
+    def __delitem__(self, key: str) -> None:
+        delattr(self, key)
+
+    def __iter__(self) -> Iterable:
+        return iter(self.__dict__)
+
+    def keys(self) -> Iterable:
+        return self.__dict__.keys()
+
+    def values(self) -> Iterable:
+        return self.__dict__.values()
+
+    def items(self) -> Iterable:
+        return self.__dict__.items()
+
+    def __getattr__(self, __name: str) -> Any:
+        print(f"get attr {__name}")
+        if self.__delimiter__ in __name:
+            __name, __rest = __name.split(self.__delimiter__, 1)
+            return getattr(self[__name], __rest)
+
+        return super().__getattribute__(__name)
+
+    def __setattr__(self, __name: str, __value: Any) -> None:
+        print(f"{__name}: {__value} will be set")
+        if self.__delimiter__ in __name:
+            __name, __rest = __name.split(self.__delimiter__, 1)
+            if not hasattr(self, __name):
+                setattr(self, __name, Config())
+            setattr(getattr(self, __name), __rest, __value)
+        else:
+            print(f"{__name}: {__value} will be set !!!!!!!!!!")
+            super().__setattr__(__name, __value)
+
     def __repr__(self):
-        type_name = type(self).__name__
         arg_strings = []
         star_args = {}
         for arg in self._get_args():
             arg_strings.append(repr(arg))
         for name, value in self._get_kwargs():
             if name.isidentifier():
-                arg_strings.append("%s=%r" % (name, value))
+                arg_strings.append(f"'{name}': {repr(value)}")
             else:
                 star_args[name] = value
         if star_args:
-            arg_strings.append("**%s" % repr(star_args))
-        return "%s(%s)" % (type_name, ", ".join(arg_strings))
+            arg_strings.append(f"**{repr(star_args)}")
+        return f"{{{', '.join(arg_strings)}}}"
 
     def _get_kwargs(self):
         return sorted(self.__dict__.items())
 
     def _get_args(self):
         return []
+
+    def dict(self):
+        base = {}
+        for key, value in self._get_kwargs():
+            if isinstance(value, type(self)):
+                base[key] = value.dict()
+            elif isinstance(value, (list, tuple)):
+                base[key] = type(value)(item.dict() if isinstance(item, type(self)) else item for item in value)
+            else:
+                base[key] = value
+        return base
 
     def __eq__(self, other):
         if not isinstance(other, Config):
@@ -106,3 +160,6 @@ class Config(object):
 
     def __contains__(self, key):
         return key in self.__dict__
+
+    def __str__(self) -> str:
+        return str(self.dict())
