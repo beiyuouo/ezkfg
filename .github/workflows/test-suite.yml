@@ -1,0 +1,38 @@
+name: Test suite
+
+on:
+  # workflow_dispatch
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - "docs/**"
+      - "README.md"
+
+jobs:
+  test:
+    name: Test on Python ${{ matrix.python_version }} and ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: False
+      matrix:
+        python_version: ["3.6", "3.7", "3.8", "3.9", "3.10"]
+        os: ["ubuntu-20.04", "windows-2019", "macos-10.15"]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python_version }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python_version }}
+      - name: Install dependencies
+        run: |
+          pip install .
+          pip install pytest
+      # pylint
+      # - name: Analysing the code with pylint
+      #   run: |
+      #     pylint $(git ls-files '*.py')
+      - name: Test with pytest
+        run: |
+          pytest
