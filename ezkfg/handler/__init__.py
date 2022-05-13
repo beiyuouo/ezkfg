@@ -1,8 +1,12 @@
 from .base_handler import BaseHandler
+from .dict_handler import DictHandler
+from .json_handler import JSONHandler
+from .py_handler import PyHandler
+from .yaml_handler import YAMLHandler
 
 handler_factories = {}
 
-__build_in_handlers = []
+__build_in_handlers = [DictHandler, JSONHandler, PyHandler, YAMLHandler]
 
 
 def register_handler_factory(name: str, handler: BaseHandler):
