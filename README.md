@@ -1,0 +1,2 @@
+# ezkfg
+Easy Configuration
