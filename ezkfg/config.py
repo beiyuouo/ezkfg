@@ -1,3 +1,12 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# @File    :   ezkfg\config.py
+# @Time    :   2022-05-13 21:30:17
+# @Author  :   Bingjie Yan
+# @Email   :   bj.yan.pa@qq.com
+# @License :   Apache License 2.0
+
+
 import os
 import copy
 
