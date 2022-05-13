@@ -1,8 +1,8 @@
 from .base_handler import BaseHandler
 
 
-class YAMLHandler(BaseHandler):
-    support_extensions = [".yaml", ".yml"]
+class PyHandler(BaseHandler):
+    support_extensions = [".py"]
 
     @staticmethod
     def load(path: str):
