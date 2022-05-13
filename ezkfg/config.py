@@ -7,7 +7,6 @@
 # @License :   Apache License 2.0
 
 
-from operator import setitem
 import os
 import copy
 from typing import Dict, List, Tuple, Any, Union, Optional, Iterable
@@ -19,6 +18,11 @@ class Config(object):
     __delimiter__ = "."
 
     def __init__(self, *args, **kwargs):
+        if "__parent__" in kwargs:
+            setattr(self, "__parent__", kwargs["__parent__"])
+        if "__key__" in kwargs:
+            setattr(self, "__key__", kwargs["__key__"])
+
         for arg in args:
             if not arg:
                 continue
@@ -104,23 +108,36 @@ class Config(object):
         return self.__dict__.items()
 
     def __getattr__(self, __name: str) -> Any:
-        print(f"get attr {__name}")
         if self.__delimiter__ in __name:
             __name, __rest = __name.split(self.__delimiter__, 1)
             return getattr(self[__name], __rest)
 
-        return super().__getattribute__(__name)
+        if __name in self.__dict__.keys():
+            return self.__dict__[__name]
+        else:
+            return self.__missing__(__name)
+
+    def __missing__(self, __name: str) -> Any:
+        return self.__class__(__parent__=self, __key__=__name)
 
     def __setattr__(self, __name: str, __value: Any) -> None:
-        print(f"{__name}: {__value} will be set")
         if self.__delimiter__ in __name:
             __name, __rest = __name.split(self.__delimiter__, 1)
-            if not hasattr(self, __name):
-                setattr(self, __name, Config())
-            setattr(getattr(self, __name), __rest, __value)
+            self.__dict__[__name] = Config()
+            setattr(self[__name], __rest, __value)
         else:
-            print(f"{__name}: {__value} will be set !!!!!!!!!!")
-            super().__setattr__(__name, __value)
+            self.__dict__[__name] = self._hook(__value)
+
+        try:
+            _par = object.__getattribute__(self, "__parent__")
+            _key = object.__getattribute__(self, "__key__")
+        except:
+            _par = None
+
+        if _par is not None:
+            _par[_key] = self
+            object.__delattr__(self, "__parent__")
+            object.__delattr__(self, "__key__")
 
     def __repr__(self):
         arg_strings = []
@@ -128,12 +145,15 @@ class Config(object):
         for arg in self._get_args():
             arg_strings.append(repr(arg))
         for name, value in self._get_kwargs():
+            # if name.startswith("_"):
+            #     continue
             if name.isidentifier():
                 arg_strings.append(f"'{name}': {repr(value)}")
             else:
                 star_args[name] = value
         if star_args:
             arg_strings.append(f"**{repr(star_args)}")
+
         return f"{{{', '.join(arg_strings)}}}"
 
     def _get_kwargs(self):
@@ -145,6 +165,8 @@ class Config(object):
     def dict(self):
         base = {}
         for key, value in self._get_kwargs():
+            if not key.isidentifier() or key.startswith("_"):
+                continue
             if isinstance(value, type(self)):
                 base[key] = value.dict()
             elif isinstance(value, (list, tuple)):
