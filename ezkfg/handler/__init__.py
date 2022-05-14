@@ -11,10 +11,11 @@ from .base_handler import BaseHandler
 from .json_handler import JSONHandler
 from .yaml_handler import YAMLHandler
 from .ini_handler import INIHandler
+from .py_handler import PyHandler
 
 handler_factories = {}
 
-__build_in_handlers = [JSONHandler, YAMLHandler, INIHandler]
+__build_in_handlers = [JSONHandler, YAMLHandler, INIHandler, PyHandler]
 
 
 def register_handler_factory(name: str, handler: BaseHandler):

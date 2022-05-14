@@ -19,4 +19,8 @@ class TestYAML:
     def test_dump(self):
         config = Config()
         config.load(os.path.join(os.path.dirname(__file__), "..", "examples", "example_config.yaml"))
-        config.dump("dump_config.ini")
+        config.dump("dump_config.yaml")
+        config_ = Config()
+        config_.load("dump_config.yaml")
+        for k, v in config.items():
+            assert config_[k] == v

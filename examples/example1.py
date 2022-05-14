@@ -1,3 +1,4 @@
+import os
 from ezkfg import Config
 
 if __name__ == "__main__":
@@ -19,3 +20,11 @@ if __name__ == "__main__":
 
     print(vars(config))
     print(config.dict())
+
+    config.load(os.path.join(os.path.dirname(__file__), "..", "examples", "example_config.py"))
+    print(config.dict())
+    assert config.a == 1
+    assert config.b.c == 2
+    assert config.z.y.x == 233
+
+    config.dump("dump_config.py")
