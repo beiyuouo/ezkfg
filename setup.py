@@ -16,5 +16,5 @@ setup(
     url="http://github.com/beiyuouo/ezkfg",
     license="Apache-2.0 License",
     packages=find_packages(),
-    requires=["pyyaml"],
+    requires=["PyYAML"],
 )
