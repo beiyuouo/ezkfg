@@ -27,6 +27,7 @@ jobs:
           python-version: ${{ matrix.python_version }}
       - name: Install dependencies
         run: |
+          pip install -r requirements.txt
           pip install .
           pip install pytest
       # pylint

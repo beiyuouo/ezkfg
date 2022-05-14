@@ -6,8 +6,7 @@
 # @Email   :   bj.yan.pa@qq.com
 # @License :   Apache License 2.0
 
-import os
-import json
+
 from typing import Dict, Any
 
 from .base_handler import BaseHandler
@@ -18,10 +17,14 @@ class JSONHandler(BaseHandler):
 
     @staticmethod
     def load(path: str, *args, **kwargs):
+        import json
+
         with open(path, "r") as f:
             return json.load(f, *args, **kwargs)
 
     @staticmethod
     def dump(path: str, data: Dict, *args, **kwargs):
+        import json
+
         with open(path, "w") as f:
             json.dump(data, f, *args, **kwargs)

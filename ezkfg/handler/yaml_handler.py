@@ -6,7 +6,6 @@
 # @Email   :   bj.yan.pa@qq.com
 # @License :   Apache License 2.0
 
-import yaml
 from typing import Dict, Any
 
 from .base_handler import BaseHandler
@@ -17,10 +16,12 @@ class YAMLHandler(BaseHandler):
 
     @staticmethod
     def load(path: str, *args, **kwargs):
+        import yaml
         with open(path, "r") as f:
             return yaml.safe_load(f, *args, **kwargs)
 
     @staticmethod
     def dump(path: str, data: Dict, *args, **kwargs):
+        import yaml
         with open(path, "w") as f:
             yaml.safe_dump(data, f, *args, **kwargs)
