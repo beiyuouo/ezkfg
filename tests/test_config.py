@@ -45,6 +45,11 @@ class TestConfig:
         assert config.get("g.111.222.333") == 9
         assert config.get("g.111.222.333.544", "default") == "default"
 
+        config.load(["--model=resnet18", "--batch-size=32", "--lr=0.01"])
+        assert config.model == "resnet18"
+        assert config.batch_size == "32"
+        assert config.lr == "0.01"
+
     def test_dict(self):
         config = Config({"a": 1, "b": {"c": 2}, "z.y.x": 233})
         assert isinstance(config.dict(), Dict)

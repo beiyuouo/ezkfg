@@ -52,6 +52,13 @@ if __name__ == '__main__':
 
     config["g.111.222.333"] = 9
     assert config.g["111.222.333"] == 9
+    assert config.get("g.111.222.333") == 9
+    assert config.get("g.111.222.333.544", "default") == "default"
+
+    config.load(["--model=resnet18", "--batch-size=32", "--lr=0.01"])
+    assert config.model == "resnet18"
+    assert config.batch_size == "32"
+    assert config.lr == "0.01"
 
     config.dump('config.json')  # support json, yaml, py, ini
     config.load('config.json')

@@ -8,6 +8,7 @@
 
 
 import os
+import sys
 import copy
 from typing import Dict, List, Tuple, Any, Union, Optional, Iterable
 from ezkfg.handler import build_handler, get_handler
@@ -48,7 +49,7 @@ class Config(object):
         if isinstance(obj, Dict):
             self.update(obj)
         elif isinstance(obj, List):
-            pass
+            self.args_parse(obj)
         elif isinstance(obj, Config):
             self.update(obj)
         elif isinstance(obj, str):
@@ -201,3 +202,18 @@ class Config(object):
 
     def __setstate__(self, state):
         self.update(state)
+
+    def args_parse(self, args: List):
+        if len(args) == 0:
+            args = sys.argv[1:]
+        for arg in args:
+            if arg.startswith("--"):
+                key, value = arg[2:].split("=", 1)
+                key = key.replace("-", "_")
+                setattr(self, key, value)
+            elif arg.startswith("-"):
+                key, value = arg[1:].split("=", 1)
+                key = key.replace("-", "_")
+                setattr(self, key, value)
+            else:
+                setattr(self, arg, True)
