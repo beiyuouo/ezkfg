@@ -6,6 +6,8 @@
 # @Email   :   bj.yan.pa@qq.com
 # @License :   Apache License 2.0
 
+import yaml
+from typing import Dict, Any
 
 from .base_handler import BaseHandler
 
@@ -14,9 +16,11 @@ class YAMLHandler(BaseHandler):
     support_extensions = [".yaml", ".yml"]
 
     @staticmethod
-    def load(path: str):
-        pass
+    def load(path: str, *args, **kwargs):
+        with open(path, "r") as f:
+            return yaml.load(f, *args, **kwargs)
 
     @staticmethod
-    def dump(path: str):
-        pass
+    def dump(path: str, data: Dict, *args, **kwargs):
+        with open(path, "w") as f:
+            yaml.dump(data, f, *args, **kwargs)

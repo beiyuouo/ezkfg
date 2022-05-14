@@ -17,11 +17,11 @@ class JSONHandler(BaseHandler):
     support_extensions = [".json"]
 
     @staticmethod
-    def load(path: str):
+    def load(path: str, *args, **kwargs):
         with open(path, "r") as f:
-            return json.load(f)
+            return json.load(f, *args, **kwargs)
 
     @staticmethod
-    def dump(path: str, data: Dict):
+    def dump(path: str, data: Dict, *args, **kwargs):
         with open(path, "w") as f:
-            json.dump(data, f, indent=4)
+            json.dump(data, f, *args, **kwargs)
