@@ -8,14 +8,13 @@
 
 
 from .base_handler import BaseHandler
-from .dict_handler import DictHandler
 from .json_handler import JSONHandler
-from .py_handler import PyHandler
 from .yaml_handler import YAMLHandler
+from .ini_handler import INIHandler
 
 handler_factories = {}
 
-__build_in_handlers = [DictHandler, JSONHandler, PyHandler, YAMLHandler]
+__build_in_handlers = [JSONHandler, YAMLHandler, INIHandler]
 
 
 def register_handler_factory(name: str, handler: BaseHandler):

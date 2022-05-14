@@ -18,9 +18,9 @@ class YAMLHandler(BaseHandler):
     @staticmethod
     def load(path: str, *args, **kwargs):
         with open(path, "r") as f:
-            return yaml.load(f, *args, **kwargs)
+            return yaml.safe_load(f, *args, **kwargs)
 
     @staticmethod
     def dump(path: str, data: Dict, *args, **kwargs):
         with open(path, "w") as f:
-            yaml.dump(data, f, *args, **kwargs)
+            yaml.safe_dump(data, f, *args, **kwargs)
