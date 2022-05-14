@@ -15,7 +15,7 @@ setup(
     author_email="bj.yan.pa@qq.com",
     url="http://github.com/beiyuouo/ezkfg",
     license="Apache-2.0 License",
-    packages=find_packages(),
+    packages=find_packages(include=["ezkfg", "ezkfg.*", "LICENSE", "README.md"]),
     install_requires=["PyYAML"],
     python_requires=">=3.6",
 )
