@@ -1,7 +1,12 @@
-from charset_normalizer import from_fp
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# @File    :   ezkfg\handler\py_handler.py
+# @Time    :   2022-05-15 02:34:26
+# @Author  :   Bingjie Yan
+# @Email   :   bj.yan.pa@qq.com
+# @License :   Apache License 2.0
 
-
-from typing import Dict, List, Tuple, Any, Union, Optional, Iterable
+from typing import Dict
 
 from .base_handler import BaseHandler
 

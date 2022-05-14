@@ -1,3 +1,12 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# @File    :   ezkfg\handler\ini_handler.py
+# @Time    :   2022-05-15 02:34:14
+# @Author  :   Bingjie Yan
+# @Email   :   bj.yan.pa@qq.com
+# @License :   Apache License 2.0
+
+
 import configparser
 from typing import Dict, Any
 from .base_handler import BaseHandler
