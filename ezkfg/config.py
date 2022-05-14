@@ -10,8 +10,7 @@
 import os
 import copy
 from typing import Dict, List, Tuple, Any, Union, Optional, Iterable
-
-from .handler import build_handler, get_handler
+from ezkfg.handler import build_handler, get_handler
 
 
 class Config(object):
@@ -64,14 +63,19 @@ class Config(object):
         file_ext = os.path.splitext(path)[1]
         handler = get_handler(file_ext)
 
+        self.update(Config(handler.load(path)))
+
     def dump(self, path: str):
-        pass
+        file_ext = os.path.splitext(path)[1]
+        handler = get_handler(file_ext)
+        handler.dump(path, self.dict())
 
     def merge(self, other):
         pass
 
     def update(self, other):
-        pass
+        for key, val in other.items():
+            setattr(self, key, val)
 
     def copy(self):
         return copy.copy(self)

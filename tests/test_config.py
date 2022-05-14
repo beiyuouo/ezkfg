@@ -1,12 +1,15 @@
 import os
+from typing import Dict, List, Tuple, Any, Union, Optional, Iterable
+
 from ezkfg import Config
 
 
 class TestConfig:
     def test_instruction(self):
-        config = Config({"a": 1, "b": {"c": 2}})
+        config = Config({"a": 1, "b": {"c": 2}, "z.y.x": 233})
         assert config.a == 1
         assert config.b.c == 2
+        assert config.z.y.x == 233
 
         config.a = 3
         assert config.a == 3
@@ -15,9 +18,31 @@ class TestConfig:
         assert config["d.e.f"] == 3
         assert config.d.e.f == 3
 
-    def test_laod(self):
-        config = Config()
-        config.load(os.path.join(os.path.dirname(__file__), "..", "examples", "example_config.json"))
+        config.e.f.g.h = 4
+        assert config.e.f.g.h == 4
+        assert config["e.f.g.h"] == 4
 
-    def test_dump(self):
-        config = Config()
+        config.e["h.i.j"] = 5
+        assert config.e["h.i.j"] == 5
+        assert config.e.h.i.j == 5
+        assert config["e.h.i.j"] == 5
+
+        config.f["i.j.k"].l = 6
+        assert config.f["i.j.k"].l == 6
+        assert config.f.i.j.k.l == 6
+        assert config["f.i.j.k.l"] == 6
+
+        config["g.h.i"].j = 7
+        assert config.g.h.i.j == 7
+        assert config["g.h.i.j"] == 7
+
+        config.g["123.456.789"] = 8
+        assert config.g["123.456.789"] == 8
+
+        config["g.111.222.333"] = 9
+        assert config.g["111.222.333"] == 9
+
+    def test_dict(self):
+        config = Config({"a": 1, "b": {"c": 2}, "z.y.x": 233})
+        assert isinstance(config.dict(), Dict)
+        assert config.dict() == {"a": 1, "b": {"c": 2}, "z": {"y": {"x": 233}}}

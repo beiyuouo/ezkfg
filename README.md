@@ -10,8 +10,57 @@ pip install ezkfg
 
 ## Usage
 
+### Basic Usage
+
 ```python
-import ezkfg
+from ezkfg import Config
+
+if __name__ == '__main__':
+    config = Config()
+    config = Config({"a": 1, "b": {"c": 2}, "z.y.x": 233})
+    assert config.a == 1
+    assert config.b.c == 2
+    assert config.z.y.x == 233
+
+    config.a = 3
+    assert config.a == 3
+
+    config["d.e.f"] = 3
+    assert config["d.e.f"] == 3
+    assert config.d.e.f == 3
+
+    config.e.f.g.h = 4
+    assert config.e.f.g.h == 4
+    assert config["e.f.g.h"] == 4
+
+    config.e["h.i.j"] = 5
+    assert config.e["h.i.j"] == 5
+    assert config.e.h.i.j == 5
+    assert config["e.h.i.j"] == 5
+
+    config.f["i.j.k"].l = 6
+    assert config.f["i.j.k"].l == 6
+    assert config.f.i.j.k.l == 6
+    assert config["f.i.j.k.l"] == 6
+
+    config["g.h.i"].j = 7
+    assert config.g.h.i.j == 7
+    assert config["g.h.i.j"] == 7
+
+    config.g["123.456.789"] = 8
+    assert config.g["123.456.789"] == 8
+
+    config["g.111.222.333"] = 9
+    assert config.g["111.222.333"] == 9
+
+    config.dump('config.json')
+    config.load('config.json')
+```
+
+### Advanced Usage
+
+```python
+
 ```
 
 ## Acknowledgements
