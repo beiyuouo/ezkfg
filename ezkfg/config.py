@@ -190,9 +190,11 @@ class Config(object):
         return str(self.dict())
 
     def get(self, key, default=None):
-        if key in self:
-            return self[key]
-        return default
+        try:
+            ret = self[key]
+        except AttributeError:
+            ret = default
+        return ret
 
     def __getstate__(self):
         return self.dict()

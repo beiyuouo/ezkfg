@@ -42,6 +42,9 @@ class TestConfig:
         config["g.111.222.333"] = 9
         assert config.g["111.222.333"] == 9
 
+        assert config.get("g.111.222.333") == 9
+        assert config.get("g.111.222.333.544", "default") == "default"
+
     def test_dict(self):
         config = Config({"a": 1, "b": {"c": 2}, "z.y.x": 233})
         assert isinstance(config.dict(), Dict)
