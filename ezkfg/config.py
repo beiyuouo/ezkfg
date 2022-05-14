@@ -70,12 +70,11 @@ class Config(object):
         handler = get_handler(file_ext)
         handler.dump(path, self.dict())
 
-    def merge(self, other):
-        pass
-
     def update(self, other):
         for key, val in other.items():
             setattr(self, key, val)
+
+    merge = update
 
     def copy(self):
         return copy.copy(self)
@@ -189,3 +188,14 @@ class Config(object):
 
     def __str__(self) -> str:
         return str(self.dict())
+
+    def get(self, key, default=None):
+        if key in self:
+            return self[key]
+        return default
+
+    def __getstate__(self):
+        return self.dict()
+
+    def __setstate__(self, state):
+        self.update(state)
