@@ -7,6 +7,8 @@
 # @License :   Apache License 2.0
 
 
+from argparse import Namespace
+import argparse
 import os
 import sys
 import copy
@@ -23,6 +25,11 @@ class Config(object):
         if "__key__" in kwargs:
             setattr(self, "__key__", kwargs["__key__"])
 
+        self.load_args_kwargs(*args, **kwargs)
+        # self.args_parse([])  # load sys.argv
+
+    def load_args_kwargs(self, *args, **kwargs):
+        # self.load_from_args(Namespace(*args, **kwargs))
         for arg in args:
             if not arg:
                 continue
@@ -31,6 +38,8 @@ class Config(object):
                     setattr(self, key, self._hook(val))
             elif isinstance(arg, Tuple) and (not isinstance(arg[0], tuple)):
                 setattr(self, arg[0], self._hook(arg[1]))
+            elif isinstance(arg, List):
+                self.args_parse(arg)
             else:
                 for key, val in iter(arg):
                     setattr(self, key, self._hook(val))
@@ -54,6 +63,8 @@ class Config(object):
             self.update(obj)
         elif isinstance(obj, str):
             self.load_from_file(obj)
+        elif isinstance(obj, Namespace):
+            self.update(obj.__dict__)
         else:
             raise TypeError(f"{type(obj)} is not supported")
 
