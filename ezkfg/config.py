@@ -150,8 +150,9 @@ class Config(object):
             _key = object.__getattribute__(self, "__key__")
         except:
             _par = None
+            _key = None
 
-        if _par is not None:
+        if _par is not None and _key is not None:
             _par[_key] = self
             object.__delattr__(self, "__parent__")
             object.__delattr__(self, "__key__")
@@ -204,7 +205,7 @@ class Config(object):
     def __str__(self) -> str:
         return str(self.dict())
 
-    def get(self, key, default=None):
+    def get(self, key: str, default=None):
         try:
             ret = self[key]
         except AttributeError:
