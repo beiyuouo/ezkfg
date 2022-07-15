@@ -12,7 +12,7 @@ import argparse
 import os
 import sys
 import copy
-from typing import Dict, List, Tuple, Any, Union, Optional, Iterable
+from typing import Dict, List, Tuple, Any, Union, Optional, Iterable, MutableMapping
 from ezkfg.handler import build_handler, get_handler
 
 
@@ -74,6 +74,8 @@ class Config(object):
         file_ext = os.path.splitext(path)[1]
         handler = get_handler(file_ext)
 
+        print("file config:", Config(handler.load(path)).dict())
+
         self.update(Config(handler.load(path)))
 
     def dump(self, path: str):
@@ -83,7 +85,13 @@ class Config(object):
 
     def update(self, other):
         for key, val in other.items():
-            setattr(self, key, val)
+            if not hasattr(self, key):
+                setattr(self, key, val)
+                continue
+            if isinstance(val, (Config, MutableMapping)) and isinstance(self[key], (Config, MutableMapping)):
+                self[key].update(val)
+            else:
+                self[key] = val
 
     merge = update
 
