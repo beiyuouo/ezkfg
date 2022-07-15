@@ -74,7 +74,7 @@ class Config(object):
         file_ext = os.path.splitext(path)[1]
         handler = get_handler(file_ext)
 
-        print("file config:", Config(handler.load(path)).dict())
+        # print("file config:", Config(handler.load(path)).dict())
 
         self.update(Config(handler.load(path)))
 
