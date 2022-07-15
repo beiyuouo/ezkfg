@@ -11,3 +11,4 @@ class TestArgs:
         assert config.model == "resnet18"
         assert config.batch_size == "32"
         assert config.lr == "0.01"
+        assert config.get("epoch") == None

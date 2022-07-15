@@ -6,7 +6,7 @@ from ezkfg import Config
 
 class TestConfig:
     def test_instruction(self):
-        config = Config({"a": 1, "b": {"c": 2}, "z.y.x": 233})
+        config = Config({"a": 1, "b": {"c": 2}, "z.y.x": 233}, __auto_create__=True)
         assert config.a == 1
         assert config.b.c == 2
         assert config.z.y.x == 233

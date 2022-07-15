@@ -20,10 +20,9 @@ class Config(object):
     __delimiter__ = "."
 
     def __init__(self, *args, **kwargs):
-        if "__parent__" in kwargs:
-            setattr(self, "__parent__", kwargs["__parent__"])
-        if "__key__" in kwargs:
-            setattr(self, "__key__", kwargs["__key__"])
+        object.__setattr__(self, "__parent__", kwargs.pop("__parent__", None))
+        object.__setattr__(self, "__key__", kwargs.pop("__key__", None))
+        object.__setattr__(self, "__auto_create__", False)
 
         self.load_args_kwargs(*args, **kwargs)
         # self.args_parse([])  # load sys.argv
@@ -133,7 +132,10 @@ class Config(object):
             return self.__missing__(__name)
 
     def __missing__(self, __name: str) -> Any:
-        return self.__class__(__parent__=self, __key__=__name)
+        if self.__auto_create__:
+            return self.__class__(__parent__=self, __key__=__name, __auto_create__=self.__auto_create__)
+        else:
+            raise AttributeError(f"{__name} not found")
 
     def __setattr__(self, __name: str, __value: Any) -> None:
         if self.__delimiter__ in __name:
@@ -197,6 +199,7 @@ class Config(object):
 
     def __contains__(self, key):
         return key in self.__dict__
+        # TODO: implement this
 
     def __str__(self) -> str:
         return str(self.dict())
@@ -228,3 +231,6 @@ class Config(object):
                 setattr(self, key, value)
             else:
                 setattr(self, arg, True)
+
+    def auto_create(self, able: bool = True):
+        self.__auto_create__ = able
