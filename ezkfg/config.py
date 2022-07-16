@@ -88,12 +88,29 @@ class Config(object):
             if not hasattr(self, key):
                 setattr(self, key, val)
                 continue
-            if isinstance(val, (Config, MutableMapping)) and isinstance(self[key], (Config, MutableMapping)):
+            if isinstance(val, (Config, MutableMapping)) and isinstance(
+                self[key], (Config, MutableMapping)
+            ):
                 self[key].update(val)
             else:
                 self[key] = val
 
-    merge = update
+    def merge(self, other, overwrite=False):
+        if not isinstance(other, Config):
+            try:
+                other = Config(other)
+            except Exception:
+                raise TypeError(f"{type(other)} is not supported")
+        for key, val in other.items():
+            if not hasattr(self, key):
+                setattr(self, key, val)
+                continue
+            if isinstance(val, (Config, MutableMapping)) and isinstance(
+                self[key], (Config, MutableMapping)
+            ):
+                self[key].merge(val, overwrite=overwrite)
+            elif overwrite:
+                self[key] = val
 
     def copy(self):
         return copy.copy(self)
@@ -141,7 +158,9 @@ class Config(object):
 
     def __missing__(self, __name: str) -> Any:
         if self.__auto_create__:
-            return self.__class__(__parent__=self, __key__=__name, __auto_create__=self.__auto_create__)
+            return self.__class__(
+                __parent__=self, __key__=__name, __auto_create__=self.__auto_create__
+            )
         else:
             raise AttributeError(f"{__name} not found")
 
@@ -196,7 +215,10 @@ class Config(object):
             if isinstance(value, type(self)):
                 base[key] = value.dict()
             elif isinstance(value, (list, tuple)):
-                base[key] = type(value)(item.dict() if isinstance(item, type(self)) else item for item in value)
+                base[key] = type(value)(
+                    item.dict() if isinstance(item, type(self)) else item
+                    for item in value
+                )
             else:
                 base[key] = value
         return base
