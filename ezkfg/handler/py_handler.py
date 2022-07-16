@@ -21,7 +21,9 @@ class PyHandler(BaseHandler):
         spec = importlib.util.spec_from_file_location("config", path)
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
-        return {k: v for k, v in module.config.__dict__.items() if not k.startswith("__")}
+        return {
+            k: v for k, v in module.config.__dict__.items() if not k.startswith("__")
+        }
 
     @staticmethod
     def dump(path: str, data: Dict, *args, **kwargs):

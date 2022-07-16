@@ -5,7 +5,11 @@ from ezkfg import Config
 class TestINI:
     def test_load(self):
         config = Config()
-        config.load(os.path.join(os.path.dirname(__file__), "..", "examples", "example_config.ini"))
+        config.load(
+            os.path.join(
+                os.path.dirname(__file__), "..", "examples", "example_config.ini"
+            )
+        )
 
         print(config.dict())
 
@@ -16,7 +20,11 @@ class TestINI:
 
     def test_dump(self):
         config = Config()
-        config.load(os.path.join(os.path.dirname(__file__), "..", "examples", "example_config.ini"))
+        config.load(
+            os.path.join(
+                os.path.dirname(__file__), "..", "examples", "example_config.ini"
+            )
+        )
         config.dump("dump_config.ini")
         config_ = Config()
         config_.load("dump_config.ini")

@@ -5,7 +5,11 @@ from ezkfg import Config
 class TestPy:
     def test_load(self):
         config = Config()
-        config.load(os.path.join(os.path.dirname(__file__), "..", "examples", "example_config.py"))
+        config.load(
+            os.path.join(
+                os.path.dirname(__file__), "..", "examples", "example_config.py"
+            )
+        )
 
         print(config.dict())
 
@@ -17,7 +21,11 @@ class TestPy:
 
     def test_dump(self):
         config = Config()
-        config.load(os.path.join(os.path.dirname(__file__), "..", "examples", "example_config.py"))
+        config.load(
+            os.path.join(
+                os.path.dirname(__file__), "..", "examples", "example_config.py"
+            )
+        )
         config.dump("dump_config.py")
         config_ = Config()
         config_.load("dump_config.py")

@@ -21,7 +21,9 @@ if __name__ == "__main__":
     print(vars(config))
     print(config.dict())
 
-    config.load(os.path.join(os.path.dirname(__file__), "..", "examples", "example_config.py"))
+    config.load(
+        os.path.join(os.path.dirname(__file__), "..", "examples", "example_config.py")
+    )
     print(config.dict())
     assert config.a == 1
     assert config.b.c == 2

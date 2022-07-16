@@ -3,10 +3,12 @@ import os
 import ezkfg
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
+__version__ = "0.0.5"
+
 
 setup(
     name="ezkfg",
-    version=ezkfg.__version__,
+    version=__version__,
     keywords=["configuration", "config"],
     description="Easy Configuration",
     long_description=open(os.path.join(base_dir, "README.md")).read(),

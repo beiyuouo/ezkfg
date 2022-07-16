@@ -17,11 +17,13 @@ class YAMLHandler(BaseHandler):
     @staticmethod
     def load(path: str, *args, **kwargs):
         import yaml
+
         with open(path, "r") as f:
             return yaml.safe_load(f, *args, **kwargs)
 
     @staticmethod
     def dump(path: str, data: Dict, *args, **kwargs):
         import yaml
+
         with open(path, "w") as f:
             yaml.safe_dump(data, f, *args, **kwargs)

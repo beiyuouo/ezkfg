@@ -5,7 +5,11 @@ from ezkfg import Config
 class TestJSON:
     def test_load(self):
         config = Config()
-        config.load(os.path.join(os.path.dirname(__file__), "..", "examples", "example_config.json"))
+        config.load(
+            os.path.join(
+                os.path.dirname(__file__), "..", "examples", "example_config.json"
+            )
+        )
 
         print(config.dict())
 
@@ -16,7 +20,11 @@ class TestJSON:
 
     def test_dump(self):
         config = Config()
-        config.load(os.path.join(os.path.dirname(__file__), "..", "examples", "example_config.json"))
+        config.load(
+            os.path.join(
+                os.path.dirname(__file__), "..", "examples", "example_config.json"
+            )
+        )
         config.dump("dump_config.json")
         config_ = Config()
         config_.load("dump_config.json")

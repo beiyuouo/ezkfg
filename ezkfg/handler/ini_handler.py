@@ -19,7 +19,9 @@ class INIHandler(BaseHandler):
     def load(path: str, *args, **kwargs):
         config = configparser.ConfigParser()
         config.read(path, *args, **kwargs)
-        config = dict(config.items("DEFAULT" if not "section" in kwargs else kwargs["section"]))
+        config = dict(
+            config.items("DEFAULT" if not "section" in kwargs else kwargs["section"])
+        )
         return config
 
     @staticmethod
