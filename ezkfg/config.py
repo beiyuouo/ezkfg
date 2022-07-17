@@ -67,6 +67,8 @@ class Config(object):
         else:
             raise TypeError(f"{type(obj)} is not supported")
 
+        return self
+
     def load_from_file(self, path: str):
         if not os.path.exists(path):
             raise FileNotFoundError(f"{path} not found")
@@ -77,6 +79,7 @@ class Config(object):
         # print("file config:", Config(handler.load(path)).dict())
 
         self.update(Config(handler.load(path)))
+        return self
 
     def dump(self, path: str):
         file_ext = os.path.splitext(path)[1]
