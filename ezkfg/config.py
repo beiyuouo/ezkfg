@@ -96,21 +96,19 @@ class Config(object):
                 self[key] = val
 
     def merge(self, other, overwrite=False):
-        if not isinstance(other, Config):
-            try:
-                other = Config(other)
-            except Exception:
-                raise TypeError(f"{type(other)} is not supported")
-        for key, val in other.items():
-            if not hasattr(self, key):
-                setattr(self, key, val)
-                continue
-            if isinstance(val, (Config, MutableMapping)) and isinstance(
-                self[key], (Config, MutableMapping)
-            ):
-                self[key].merge(val, overwrite=overwrite)
-            elif overwrite:
-                self[key] = val
+        try:
+            for key, val in other.items():
+                if not hasattr(self, key):
+                    setattr(self, key, val)
+                    continue
+                if isinstance(val, (Config, MutableMapping)) and isinstance(
+                    self[key], (Config, MutableMapping)
+                ):
+                    self[key].merge(val, overwrite=overwrite)
+                elif overwrite:
+                    self[key] = val
+        except Exception as e:
+            raise e
 
     def copy(self):
         return copy.copy(self)
