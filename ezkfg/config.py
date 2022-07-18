@@ -163,7 +163,8 @@ class Config(object):
                 __parent__=self, __key__=__name, __auto_create__=self.__auto_create__
             )
         else:
-            raise AttributeError(f"{__name} not found")
+            return None
+            # raise AttributeError(f"{__name} not found")
 
     def __setattr__(self, __name: str, __value: Any) -> None:
         if self.__delimiter__ in __name:
