@@ -72,4 +72,4 @@ if __name__ == '__main__':
 
 ## Acknowledgements
 
-This project is inspired by the [addict](https://github.com/mewwts/addict) and [mmdetection](https://github.com/open-mmlab/mmdetection).
+This project is inspired by the [addict](https://github.com/mewwts/addict), [CHANfiG](https://github.com/ZhiyuanChen/CHANfiG) and [mmdetection](https://github.com/open-mmlab/mmdetection).

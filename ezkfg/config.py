@@ -99,19 +99,33 @@ class Config(object):
                 self[key] = val
 
     def merge(self, other, overwrite=False):
-        try:
-            for key, val in other.items():
-                if not hasattr(self, key):
-                    setattr(self, key, val)
-                    continue
-                if isinstance(val, (Config, MutableMapping)) and isinstance(
-                    self[key], (Config, MutableMapping)
-                ):
-                    self[key].merge(val, overwrite=overwrite)
-                elif overwrite:
-                    self[key] = val
-        except Exception as e:
-            raise e
+        if not isinstance(other, Config):
+            try:
+                if isinstance(other, List):
+                    other = Config(other)
+                elif isinstance(other, Dict):
+                    other = Config(**other)
+                elif isinstance(other, tuple):
+                    other = Config(*other)
+                else:
+                    other = Config(other)
+            except Exception as e:
+                raise TypeError(f"{type(other)} is not supported") from e
+
+        print("merge:", other.dict())
+        self.auto_create(True)
+        for key, val in other.items():
+            if not hasattr(self, key):
+                self[key] = val
+                continue
+            if isinstance(val, (Config, MutableMapping)) and isinstance(
+                self[key], (Config, MutableMapping)
+            ):
+                self[key].merge(val, overwrite=overwrite)
+            elif overwrite:
+                self[key] = val
+        print("merge:", self.dict())
+        self.auto_create(False)
 
     def copy(self):
         return copy.copy(self)
@@ -240,6 +254,8 @@ class Config(object):
     def get(self, key: str, default=None):
         try:
             ret = self[key]
+            if ret is None:
+                ret = default
         except AttributeError:
             ret = default
         return ret
