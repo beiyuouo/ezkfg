@@ -71,7 +71,7 @@ class Config(object):
 
     def get(self, key: str, default: Optional[Any] = None):
         try:
-            getattr(self, key)
+            return getattr(self, key)
         except AttributeError:
             return default
 

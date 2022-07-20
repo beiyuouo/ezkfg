@@ -26,6 +26,7 @@ class TestConfig:
         assert config.e["h.i.j"] == 5
         assert config.e.h.i.j == 5
         assert config["e.h.i.j"] == 5
+        assert config["e.h.i"].get("j", None) == 5
 
         config["g.h.i.j"] = 7
         assert config.g.h.i.j == 7
