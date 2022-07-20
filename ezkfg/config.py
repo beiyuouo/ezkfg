@@ -12,7 +12,17 @@ import argparse
 import os
 import sys
 import copy
-from typing import Dict, List, Tuple, Any, Union, Optional, Iterable, MutableMapping
+from typing import (
+    Dict,
+    List,
+    Mapping,
+    Tuple,
+    Any,
+    Union,
+    Optional,
+    Iterable,
+    MutableMapping,
+)
 from ezkfg.handler import build_handler, get_handler
 
 
@@ -20,12 +30,9 @@ class Config(object):
     __delimiter__ = "."
 
     def __init__(self, *args, **kwargs):
-        object.__setattr__(self, "__parent__", kwargs.pop("__parent__", None))
-        object.__setattr__(self, "__key__", kwargs.pop("__key__", None))
-        object.__setattr__(self, "__auto_create__", False)
+        object.__setattr__(self, "__frozen__", False)
 
         self.load_args_kwargs(*args, **kwargs)
-        # self.args_parse([])  # load sys.argv
 
     def load_args_kwargs(self, *args, **kwargs):
         # self.load_from_args(Namespace(*args, **kwargs))
@@ -53,6 +60,70 @@ class Config(object):
             return type(value)(self._hook(elem) for elem in value)
         return value
 
+    def __getattr__(self, key: str) -> Any:
+        if self.__delimiter__ in key:
+            _name, _rest = key.split(self.__delimiter__, 1)
+            # if not hasattr(self, _name):
+            #     setattr(self, _name, Config())
+            return getattr(self[_name], _rest)
+        else:
+            return super().__getattribute__(key)
+
+    def get(self, key: str, default: Optional[Any] = None):
+        try:
+            getattr(self, key)
+        except AttributeError:
+            return default
+
+    __getitem__ = __getattr__
+
+    def set(self, key: str, value: Any):
+        if self.__frozen__:
+            raise AttributeError("Config is frozen")
+
+        if self.__delimiter__ in key:
+            _name, _rest = key.split(self.__delimiter__, 1)
+            if not hasattr(self, _name):
+                setattr(self, _name, Config())
+            setattr(self[_name], _rest, value)
+        else:
+            super().__setattr__(key, self._hook(value))
+
+    __setattr__ = set
+    __setitem__ = set
+
+    def __delitem__(self, key: str) -> None:
+        delattr(self, key)
+
+    def __iter__(self) -> Iterable:
+        return iter(self.__dict__)
+
+    def keys(self) -> Iterable:
+        return self.__dict__.keys()
+
+    def values(self) -> Iterable:
+        return self.__dict__.values()
+
+    def items(self) -> Iterable:
+        return self.__dict__.items()
+
+    def __repr__(self):
+        arg_strings = []
+        star_args = {}
+        for arg in self._get_args():
+            arg_strings.append(repr(arg))
+        for name, value in self._get_kwargs():
+            # if name.startswith("_"):
+            #     continue
+            if name.isidentifier():
+                arg_strings.append(f"'{name}': {repr(value)}")
+            else:
+                star_args[name] = value
+        if star_args:
+            arg_strings.append(f"**{repr(star_args)}")
+
+        return f"{{{', '.join(arg_strings)}}}"
+
     def load(self, obj):
         if isinstance(obj, Dict):
             self.update(obj)
@@ -76,8 +147,6 @@ class Config(object):
         file_ext = os.path.splitext(path)[1]
         handler = get_handler(file_ext)
 
-        # print("file config:", Config(handler.load(path)).dict())
-
         self.update(Config(handler.load(path)))
         return self
 
@@ -89,7 +158,7 @@ class Config(object):
     def update(self, other):
         for key, val in other.items():
             if not hasattr(self, key):
-                setattr(self, key, val)
+                self.set(key, val)
                 continue
             if isinstance(val, (Config, MutableMapping)) and isinstance(
                 self[key], (Config, MutableMapping)
@@ -112,20 +181,16 @@ class Config(object):
             except Exception as e:
                 raise TypeError(f"{type(other)} is not supported") from e
 
-        print("merge:", other.dict())
-        self.auto_create(True)
         for key, val in other.items():
             if not hasattr(self, key):
-                self[key] = val
+                self.set(key, val)
                 continue
-            if isinstance(val, (Config, MutableMapping)) and isinstance(
+            if isinstance(val, (Config, MutableMapping)) or isinstance(
                 self[key], (Config, MutableMapping)
             ):
                 self[key].merge(val, overwrite=overwrite)
             elif overwrite:
                 self[key] = val
-        print("merge:", self.dict())
-        self.auto_create(False)
 
     def copy(self):
         return copy.copy(self)
@@ -139,83 +204,6 @@ class Config(object):
         for key, value in self.__dict__.items():
             setattr(other, key, copy.deepcopy(value))
         return other
-
-    def __getitem__(self, key: str) -> Any:
-        return getattr(self, key)
-
-    def __setitem__(self, key: str, value: Any) -> None:
-        setattr(self, key, self._hook(value))
-
-    def __delitem__(self, key: str) -> None:
-        delattr(self, key)
-
-    def __iter__(self) -> Iterable:
-        return iter(self.__dict__)
-
-    def keys(self) -> Iterable:
-        return self.__dict__.keys()
-
-    def values(self) -> Iterable:
-        return self.__dict__.values()
-
-    def items(self) -> Iterable:
-        return self.__dict__.items()
-
-    def __getattr__(self, __name: str) -> Any:
-        if self.__delimiter__ in __name:
-            __name, __rest = __name.split(self.__delimiter__, 1)
-            return getattr(self[__name], __rest)
-
-        if __name in self.__dict__.keys():
-            return self.__dict__[__name]
-        else:
-            return self.__missing__(__name)
-
-    def __missing__(self, __name: str) -> Any:
-        if self.__auto_create__:
-            return self.__class__(
-                __parent__=self, __key__=__name, __auto_create__=self.__auto_create__
-            )
-        else:
-            return None
-            # raise AttributeError(f"{__name} not found")
-
-    def __setattr__(self, __name: str, __value: Any) -> None:
-        if self.__delimiter__ in __name:
-            __name, __rest = __name.split(self.__delimiter__, 1)
-            self.__dict__[__name] = Config()
-            setattr(self[__name], __rest, __value)
-        else:
-            self.__dict__[__name] = self._hook(__value)
-
-        try:
-            _par = object.__getattribute__(self, "__parent__")
-            _key = object.__getattribute__(self, "__key__")
-        except:
-            _par = None
-            _key = None
-
-        if _par is not None and _key is not None:
-            _par[_key] = self
-            object.__delattr__(self, "__parent__")
-            object.__delattr__(self, "__key__")
-
-    def __repr__(self):
-        arg_strings = []
-        star_args = {}
-        for arg in self._get_args():
-            arg_strings.append(repr(arg))
-        for name, value in self._get_kwargs():
-            # if name.startswith("_"):
-            #     continue
-            if name.isidentifier():
-                arg_strings.append(f"'{name}': {repr(value)}")
-            else:
-                star_args[name] = value
-        if star_args:
-            arg_strings.append(f"**{repr(star_args)}")
-
-        return f"{{{', '.join(arg_strings)}}}"
 
     def _get_kwargs(self):
         return sorted(self.__dict__.items())
@@ -251,15 +239,6 @@ class Config(object):
     def __str__(self) -> str:
         return str(self.dict())
 
-    def get(self, key: str, default=None):
-        try:
-            ret = self[key]
-            if ret is None:
-                ret = default
-        except AttributeError:
-            ret = default
-        return ret
-
     def __getstate__(self):
         return self.dict()
 
@@ -281,5 +260,18 @@ class Config(object):
             else:
                 setattr(self, arg, True)
 
-    def auto_create(self, able: bool = True):
-        self.__auto_create__ = able
+    def setdefault(self, key, default=None):
+        if key in self:
+            return self[key]
+        else:
+            self[key] = default
+            return default
+
+    def freeze(self, shouldFreeze=True):
+        self.set("__frozen__", shouldFreeze)
+        for key, val in self.items():
+            if isinstance(val, Dict):
+                val.freeze(shouldFreeze)
+
+    def unfreeze(self):
+        self.freeze(False)
