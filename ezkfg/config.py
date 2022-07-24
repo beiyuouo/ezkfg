@@ -240,9 +240,10 @@ class Config(object):
         return str(self.dict())
 
     def __getstate__(self):
-        return self.dict()
+        return self
 
     def __setstate__(self, state):
+        self.set("__frozen__", False)
         self.update(state)
 
     def args_parse(self, args: List):

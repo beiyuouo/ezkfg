@@ -3,7 +3,7 @@ import os
 import ezkfg
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
-__version__ = "0.0.6a2"
+__version__ = "0.0.6"
 
 
 setup(
