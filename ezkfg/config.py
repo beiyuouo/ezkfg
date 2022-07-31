@@ -53,6 +53,8 @@ class Config(object):
         for key, val in kwargs.items():
             setattr(self, key, self._hook(val))
 
+        return self
+
     def _hook(self, value):
         if isinstance(value, Dict):
             return Config(value)
@@ -240,10 +242,11 @@ class Config(object):
         return str(self.dict())
 
     def __getstate__(self):
-        return self
+        return self.__dict__
 
     def __setstate__(self, state):
-        self.set("__frozen__", False)
+        object.__setattr__(self, "__frozen__", False)
+        state = Config().load_args_kwargs(**state)
         self.update(state)
 
     def args_parse(self, args: List):
