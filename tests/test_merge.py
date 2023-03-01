@@ -1,10 +1,10 @@
-from ezkfg import Config
+import ezkfg as ez
 
 
 class TestMerge:
     def test_merge(self):
-        config1 = Config().load(["--model=resnet18", "--batch-size=32", "--lr=0.01"])
-        config2 = Config().load(["--epoch=100", "--lr=0.001"])
+        config1 = ez.load(["--model=resnet18", "--batch-size=32", "--lr=0.01"])
+        config2 = ez.load(["--epoch=100", "--lr=0.001"])
 
         config1.merge(config2, overwrite=False)
         assert config1.model == "resnet18"

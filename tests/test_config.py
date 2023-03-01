@@ -41,3 +41,8 @@ class TestConfig:
         config = Config({"a": 1, "b": {"c": 2}, "z.y.x": 233})
         assert isinstance(config.dict(), Dict)
         assert config.dict() == {"a": 1, "b": {"c": 2}, "z": {"y": {"x": 233}}}
+
+    def test_dict_with_config(self):
+        config = Config({"c": Config({"d": 1})})
+        assert isinstance(config.dict(), Dict)
+        assert config.dict() == {"c": {"d": 1}}

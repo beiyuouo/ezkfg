@@ -1,11 +1,10 @@
 import os
-from ezkfg import Config
+import ezkfg as ez
 
 
 class TestINI:
     def test_load(self):
-        config = Config()
-        config.load(
+        config = ez.load(
             os.path.join(
                 os.path.dirname(__file__), "..", "examples", "example_config.ini"
             )
@@ -19,14 +18,12 @@ class TestINI:
         assert config.e == "4"
 
     def test_dump(self):
-        config = Config()
-        config.load(
+        config = ez.load(
             os.path.join(
                 os.path.dirname(__file__), "..", "examples", "example_config.ini"
             )
         )
         config.dump("dump_config.ini")
-        config_ = Config()
-        config_.load("dump_config.ini")
+        config_ = ez.load("dump_config.ini")
         for k, v in config.items():
             assert config_[k] == v

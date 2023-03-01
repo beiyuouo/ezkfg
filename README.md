@@ -13,10 +13,11 @@ pip install ezkfg
 ### Basic Usage
 
 ```python
+import ezkfg as ez
 from ezkfg import Config
 
 if __name__ == '__main__':
-    config = Config({"a": 1, "b": {"c": 2}, "z.y.x": 233})
+    config = Config({"a": 1, "b": {"c": 2}, "z.y.x": 233})  # or ez.load("xxx")
     assert config.a == 1
     assert config.b.c == 2
     assert config.z.y.x == 233
@@ -49,6 +50,8 @@ if __name__ == '__main__':
     config.dump('config.json')  # support json, yaml, py, ini
     config.load('config.json')
 ```
+
+You can find more examples in [tests](https://github.com/beiyuouo/ezkfg/tree/main/tests).
 
 ### Advanced Usage
 

@@ -1,10 +1,9 @@
-from ezkfg import Config
+import ezkfg as ez
 
 
 class TestArgs:
     def test_args(self):
-        config = Config()
-        config.load(["--model=resnet18", "--batch-size=32", "--lr=0.01"])
+        config = ez.load(["--model=resnet18", "--batch-size=32", "--lr=0.01"])
 
         print(config.dict())
 

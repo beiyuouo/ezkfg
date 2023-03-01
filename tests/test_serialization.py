@@ -1,12 +1,11 @@
 import os
 import pickle
-from ezkfg import Config
+import ezkfg as ez
 
 
 class TestSerialzation:
     def test_serialzation(self):
-        config = Config()
-        config.load(
+        config = ez.load(
             os.path.join(
                 os.path.dirname(__file__), "..", "examples", "example_config.yaml"
             )

@@ -98,16 +98,16 @@ class Config(object):
         delattr(self, key)
 
     def __iter__(self) -> Iterable:
-        return iter(self.__dict__)
+        return iter(self.dict)
 
     def keys(self) -> Iterable:
-        return self.__dict__.keys()
+        return self.dict().keys()
 
     def values(self) -> Iterable:
-        return self.__dict__.values()
+        return self.dict().values()
 
     def items(self) -> Iterable:
-        return self.__dict__.items()
+        return self.dict().items()
 
     def __repr__(self):
         arg_strings = []
@@ -231,8 +231,17 @@ class Config(object):
 
     def __eq__(self, other):
         if not isinstance(other, Config):
-            return NotImplemented
-        return vars(self) == vars(other)
+            if isinstance(other, Dict):
+                return self.dict() == other
+            elif isinstance(other, Namespace):
+                return self.dict() == other.__dict__
+            else:
+                raise TypeError(
+                    f"Comparison between {type(self)} and {type(other)} is not supported"
+                )
+
+        # ignore the __frozen__ attribute
+        return self.dict() == other.dict()
 
     def __contains__(self, key):
         return key in self.__dict__
@@ -279,3 +288,7 @@ class Config(object):
 
     def unfreeze(self):
         self.freeze(False)
+
+
+def load(*args, **kwargs):
+    return Config().load(*args, **kwargs)

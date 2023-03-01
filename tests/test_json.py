@@ -1,11 +1,10 @@
 import os
-from ezkfg import Config
+import ezkfg as ez
 
 
 class TestJSON:
     def test_load(self):
-        config = Config()
-        config.load(
+        config = ez.load(
             os.path.join(
                 os.path.dirname(__file__), "..", "examples", "example_config.json"
             )
@@ -19,14 +18,12 @@ class TestJSON:
         assert config.c.d.e == 3
 
     def test_dump(self):
-        config = Config()
-        config.load(
+        config = ez.load(
             os.path.join(
                 os.path.dirname(__file__), "..", "examples", "example_config.json"
             )
         )
         config.dump("dump_config.json")
-        config_ = Config()
-        config_.load("dump_config.json")
+        config_ = ez.load("dump_config.json")
         for k, v in config.items():
             assert config_[k] == v
