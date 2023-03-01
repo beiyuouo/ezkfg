@@ -292,3 +292,12 @@ class Config(object):
 
 def load(*args, **kwargs):
     return Config().load(*args, **kwargs)
+
+
+def save(obj, path):
+    if isinstance(obj, Config):
+        obj.dump(path)
+    elif isinstance(obj, Dict):
+        Config(obj).dump(path)
+    else:
+        raise TypeError(f"{type(obj)} is not supported")

@@ -27,3 +27,8 @@ class TestINI:
         config_ = ez.load("dump_config.ini")
         for k, v in config.items():
             assert config_[k] == v
+
+        ez.save(config, "dump_config.ini")
+        config_ = ez.load("dump_config.ini")
+        for k, v in config.items():
+            assert config_[k] == v

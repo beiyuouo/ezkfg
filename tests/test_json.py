@@ -27,3 +27,8 @@ class TestJSON:
         config_ = ez.load("dump_config.json")
         for k, v in config.items():
             assert config_[k] == v
+
+        ez.save(config, "dump_config.json")
+        config_ = ez.load("dump_config.json")
+        for k, v in config.items():
+            assert config_[k] == v
