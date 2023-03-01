@@ -23,6 +23,7 @@ from typing import (
     Iterable,
     MutableMapping,
 )
+from pathlib import Path
 from ezkfg.handler import build_handler, get_handler
 
 
@@ -133,7 +134,7 @@ class Config(object):
             self.args_parse(obj)
         elif isinstance(obj, Config):
             self.update(obj)
-        elif isinstance(obj, str):
+        elif isinstance(obj, str) or isinstance(obj, Path):
             self.load_from_file(obj)
         elif isinstance(obj, Namespace):
             self.update(obj.__dict__)
@@ -142,18 +143,20 @@ class Config(object):
 
         return self
 
-    def load_from_file(self, path: str):
-        if not os.path.exists(path):
+    def load_from_file(self, path: str or Path):
+        if isinstance(path, str) and not os.path.exists(path):
+            raise FileNotFoundError(f"{path} not found")
+        if isinstance(path, Path) and not path.exists():
             raise FileNotFoundError(f"{path} not found")
 
-        file_ext = os.path.splitext(path)[1]
+        file_ext = os.path.splitext(path)[1] if isinstance(path, str) else path.suffix
         handler = get_handler(file_ext)
 
         self.update(Config(handler.load(path)))
         return self
 
-    def dump(self, path: str):
-        file_ext = os.path.splitext(path)[1]
+    def dump(self, path: str or Path):
+        file_ext = os.path.splitext(path)[1] if isinstance(path, str) else path.suffix
         handler = get_handler(file_ext)
         handler.dump(path, self.dict())
 
