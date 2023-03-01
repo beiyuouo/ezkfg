@@ -28,3 +28,9 @@ class TestPy:
         config_ = ez.load("dump_config.py")
         for k, v in config.items():
             assert config_[k] == v
+
+        ez.save(config, "dump_config.py")
+        config_ = ez.load("dump_config.py")
+        for k, v in config.items():
+            assert config_[k] == v
+        

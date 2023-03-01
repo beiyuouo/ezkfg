@@ -6,15 +6,17 @@
 # @Email   :   bj.yan.pa@qq.com
 # @License :   Apache License 2.0
 
+from pathlib import Path
+
 
 class BaseHandler(object):
 
     support_extensions = []
 
     @staticmethod
-    def load(path: str):
+    def load(path: str or Path):
         pass
 
     @staticmethod
-    def dump(path: str, data: dict):
+    def dump(path: str or Path, data: dict):
         pass

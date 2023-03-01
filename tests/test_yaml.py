@@ -29,3 +29,8 @@ class TestYAML:
         config_ = ez.load("dump_config.yaml")
         for k, v in config.items():
             assert config_[k] == v
+
+        ez.save(config, "dump_config.yaml")
+        config_ = ez.load("dump_config.yaml")
+        for k, v in config.items():
+            assert config_[k] == v

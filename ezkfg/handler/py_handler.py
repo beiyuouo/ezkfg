@@ -7,7 +7,7 @@
 # @License :   Apache License 2.0
 
 from typing import Dict
-
+from pathlib import Path
 from .base_handler import BaseHandler
 
 
@@ -15,7 +15,7 @@ class PyHandler(BaseHandler):
     support_extensions = [".py"]
 
     @staticmethod
-    def load(path: str, *args, **kwargs):
+    def load(path: str or Path, *args, **kwargs):
         import importlib
 
         spec = importlib.util.spec_from_file_location("config", path)
@@ -26,7 +26,7 @@ class PyHandler(BaseHandler):
         }
 
     @staticmethod
-    def dump(path: str, data: Dict, *args, **kwargs):
+    def dump(path: str or Path, data: Dict, *args, **kwargs):
         with open(path, "w") as f:
             f.write(f"class config:\n")
             for k, v in data.items():

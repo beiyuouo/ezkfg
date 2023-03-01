@@ -7,7 +7,7 @@
 # @License :   Apache License 2.0
 
 from typing import Dict, Any
-
+from pathlib import Path
 from .base_handler import BaseHandler
 
 
@@ -15,14 +15,14 @@ class YAMLHandler(BaseHandler):
     support_extensions = [".yaml", ".yml"]
 
     @staticmethod
-    def load(path: str, *args, **kwargs):
+    def load(path: str or Path, *args, **kwargs):
         import yaml
 
         with open(path, "r") as f:
             return yaml.safe_load(f, *args, **kwargs)
 
     @staticmethod
-    def dump(path: str, data: Dict, *args, **kwargs):
+    def dump(path: str or Path, data: Dict, *args, **kwargs):
         import yaml
 
         with open(path, "w") as f:

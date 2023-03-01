@@ -9,6 +9,7 @@
 
 import configparser
 from typing import Dict, Any
+from pathlib import Path
 from .base_handler import BaseHandler
 
 
@@ -25,7 +26,7 @@ class INIHandler(BaseHandler):
         return config
 
     @staticmethod
-    def dump(path: str, data: Dict, *args, **kwargs):
+    def dump(path: str or Path, data: Dict, *args, **kwargs):
         config = configparser.ConfigParser()
         config.read_dict({"DEFAULT": data}, *args, **kwargs)
         with open(path, "w") as f:

@@ -8,6 +8,7 @@
 
 
 from typing import Dict, Any
+from pathlib import Path
 
 from .base_handler import BaseHandler
 
@@ -16,14 +17,14 @@ class JSONHandler(BaseHandler):
     support_extensions = [".json"]
 
     @staticmethod
-    def load(path: str, *args, **kwargs):
+    def load(path: str or Path, *args, **kwargs):
         import json
 
         with open(path, "r") as f:
             return json.load(f, *args, **kwargs)
 
     @staticmethod
-    def dump(path: str, data: Dict, *args, **kwargs):
+    def dump(path: str or Path, data: Dict, *args, **kwargs):
         import json
 
         with open(path, "w") as f:
