@@ -159,6 +159,12 @@ class Config(object):
         file_ext = os.path.splitext(path)[1] if isinstance(path, str) else path.suffix
         handler = get_handler(file_ext)
         handler.dump(path, self.dict())
+    
+    def save(self, path: str or Path):
+        self.dump(path)
+    
+    def write(self, path: str or Path):
+        self.dump(path)
 
     def update(self, other):
         for key, val in other.items():
@@ -297,10 +303,20 @@ def load(*args, **kwargs):
     return Config().load(*args, **kwargs)
 
 
-def save(obj, path):
+def dump(obj, path):
     if isinstance(obj, Config):
         obj.dump(path)
     elif isinstance(obj, Dict):
         Config(obj).dump(path)
     else:
         raise TypeError(f"{type(obj)} is not supported")
+
+def save(obj, path):
+    dump(obj, path)
+
+def write(obj, path):
+    dump(obj, path)
+
+def load_from_file(path: str or Path):
+    return Config().load_from_file(path)
+
